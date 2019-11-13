@@ -11,18 +11,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 
-import com.cs.sis_sdk.ble.SgBleManager;
-import com.cs.sis_sdk.ble.data.ScanResult;
-import com.cs.sis_sdk.ble.scan.ListScanCallback;
-import com.cs.sis_sdk.ble.utils.BleLog;
 import com.example.administrator.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cn.everfine.base.BaseActivity;
 import cn.everfine.base.SISQuickAdapter;
 import cn.everfine.base.ViewHolder;
 import cn.everfine.bean.SetBean;
+import cn.everfine.ble.BleProxy;
 import cn.everfine.util.DialogUtil;
 
 /**
@@ -36,6 +34,9 @@ public class SetActivity2 extends BaseActivity {
   private ImageView imageback;
   private SISQuickAdapter<SetBean> setListAdapter;
 
+
+  protected SISQuickAdapter<String> bleAdapter;
+  protected List<String> mData=new ArrayList<>();
   EditText editText; // dialog 里面的输入框
 
   @Override
@@ -43,10 +44,31 @@ public class SetActivity2 extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_setting);
     init();
-
   }
 
+  private void initBleDialogAdapter(){
+    bleAdapter = new SISQuickAdapter<String>(mContext, mData, R.layout.view_item_ble_dialog) {
+      @Override
+      public void convert(ViewHolder helper, String item, final int position) {
+
+        helper.setText(R.id.bleName,item);
+
+      }
+    };
+  }
+
+  private void showBleDialog(){
+    DialogUtil.showBleDialog(mContext, bleAdapter, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+  }
+
+
   private void init() {
+    initBleDialogAdapter();
     initSetAdapter();
     initDialogEdit();
     setList = (ListView) findViewById(R.id.setting_list);
@@ -107,6 +129,7 @@ public class SetActivity2 extends BaseActivity {
         showEditDialog(item);
         break;
       case 4:
+        showBleDialog();
         break;
       case 5:
         showEditDialog(item);
@@ -117,9 +140,9 @@ public class SetActivity2 extends BaseActivity {
 
     }
 
-    if (position == 4) {
-      startScanBle();
-    }
+//    if (position == 4) {
+//      startScanBle();
+//    }
   }
 
 
@@ -135,20 +158,46 @@ public class SetActivity2 extends BaseActivity {
   }
 
   private void startScanBle() {
-    SgBleManager bleManager = SgBleManager.getInstance(mContext);
-    if (bleManager.isBlueEnable()) {
-      bleManager.scanDevice(new ListScanCallback(1000 * 60) {
-        @Override
-        public void onScanning(ScanResult result) {
-          BleLog.d("ScanResult :" + result);
-        }
 
-        @Override
-        public void onScanComplete(ScanResult[] results) {
 
-        }
-      });
-    }
+
+//    BleManager.getInstance().scan(new BleScanCallback() {
+//      @Override
+//      public void onScanStarted(boolean success) {
+//      }
+//
+//      @Override
+//      public void onLeScan(BleDevice bleDevice) {
+//        BleLog.d("ScanResult :" + bleDevice);
+//      }
+//
+//      @Override
+//      public void onScanning(BleDevice bleDevice) {
+//        BleLog.d("ScanResult :" + bleDevice);
+//      }
+//
+//      @Override
+//      public void onScanFinished(List<BleDevice> scanResultList) {
+//      }
+//    });
+
+
+
+
+//    SgBleManager bleManager = SgBleManager.getInstance(mContext);
+//    if (bleManager.isBlueEnable()) {
+//      bleManager.scanDevice(new ListScanCallback(1000 * 60) {
+//        @Override
+//        public void onScanning(ScanResult result) {
+//          BleLog.d("ScanResult :" + result);
+//        }
+//
+//        @Override
+//        public void onScanComplete(ScanResult[] results) {
+//          BleLog.d("ScanResult :" + results.length);
+//        }
+//      });
+//    }
   }
 
 }

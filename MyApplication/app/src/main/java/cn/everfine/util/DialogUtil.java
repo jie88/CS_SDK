@@ -9,11 +9,11 @@ import android.widget.ListAdapter;
 
 public class DialogUtil {
 
-    public static void showBleDialog(Context context, ListAdapter adapter){
+    public static void showBleDialog(Context context, ListAdapter adapter, DialogInterface.OnClickListener listener){
         AlertDialog.Builder listDialog =
                 new AlertDialog.Builder(context);
         listDialog.setTitle("蓝牙列表");
-        listDialog.setAdapter(adapter,null);
+        listDialog.setAdapter(adapter,listener);
         listDialog.show();
     }
 
