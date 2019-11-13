@@ -29,9 +29,7 @@ import cn.everfine.bean.SetBean;
 
 import cn.everfine.util.DialogUtil;
 
-/**
- * author : ${CHENJIE} created at  2019-11-13 10:30 e_mail : chenjie_goodboy@163.com describle :
- */
+
 public class SetActivity2 extends BaseActivity {
 
 
@@ -50,7 +48,7 @@ public class SetActivity2 extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_setting);
     init();
-
+    initBle();
 
   }
 
