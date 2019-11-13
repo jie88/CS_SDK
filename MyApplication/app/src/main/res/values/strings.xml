@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="ok">确定</string>
+    <string name="set_0">仪器校零（仪器校零请盖上盖头）</string>
+    <string name="disconnect">断开连接</string>
+    <string name="setdefault">设置固定积分时间</string>
+    <string name="setauto">设置自动积分时间上限</string>
+    <string name="search">搜索蓝牙设备</string>
+    <string name="readflash">手动读取flash</string>
+    <string name="pingjun">平均次数</string>
+    <string name="beice">被测信号</string>
+    <string name="getelec">获取电量</string>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_11">11dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+    <dimen name="dp_14">14dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_18">18dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_22">22dp</dimen>
+    <dimen name="dp_24">24dp</dimen>
+    <dimen name="dp_26">26dp</dimen>
+    <dimen name="dp_28">28dp</dimen>
+    <dimen name="dp_30">30dp</dimen>
+    <dimen name="dp_32">32dp</dimen>
+    <dimen name="dp_34">34dp</dimen>
+    <dimen name="dp_36">36dp</dimen>
+    <dimen name="dp_38">38dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="dp_44">44dp</dimen>
+    
+    <dimen name="dp_230">230dp</dimen>
+    <dimen name="dp_195">195dp</dimen>
+    <dimen name="dp_55">55dp</dimen>
+    
+    <dimen name="everfile_log_w">539px</dimen>
+    <dimen name="everfile_log_h">113px</dimen>
+    
+    <dimen name="ti_w">366px</dimen>
+    <dimen name="ti_h">97px</dimen>
+    <dimen name="file_wh">160px</dimen>
+    <dimen name="start_wh">144px</dimen>
+    
+    <dimen name="data_bg_w">900px</dimen>
+    <dimen name="data_bg_h">123px</dimen>
+    <dimen name="file_title_w">404px</dimen>
+    <dimen name="file_title_h">57px</dimen>
+    
+    <dimen name="title_w">300px</dimen>
+    <dimen name="title_h">72px</dimen>
+    
+    <dimen name="app_type_w">333px</dimen>
+    <dimen name="app_type_h">61px</dimen>
+    
+    <dimen name="back_wh">120px</dimen>
+    
+    <dimen name="button_w">420px</dimen>
+    <dimen name="button_h">120px</dimen>
+    <dimen name="image_wh">760px</dimen>
+    
+</resources>

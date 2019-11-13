@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="@dimen/back_wh"
+            android:layout_height="@dimen/back_wh"
+            android:background="@drawable/back" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@null">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="搜索到设备"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/dp_22" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/lines"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/top"
+        android:background="@color/c_aaabab" />
+
+    <ListView
+        android:id="@+id/lv_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lines" />
+</RelativeLayout>

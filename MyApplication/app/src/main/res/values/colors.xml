@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="hot_picture_subject_backgourd_gray">#ffd8dce4</color>
+    <color name="white">#e6eff2</color>
+    <color name="black">#ff000000</color>
+    <color name="gray">#808080</color>
+    <color name="deep_blue">#ff1e7e84</color>
+    <color name="hot_picture_subject_name">#ff029eea</color>
+    <color name="c_aaabab">#aaabab</color>
+    <color name="red">#ffcc0033</color>
+    <color name="color_updating">#ff8c3836</color>
+    <color name="sns_hot_picture_subject_image_default">#ffd8dce4</color>
+
+</resources>
