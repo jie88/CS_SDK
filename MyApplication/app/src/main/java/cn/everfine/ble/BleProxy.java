@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import com.ble.api.DataUtil;
 import com.ble.ble.BleCallBack;
 import com.ble.ble.BleService;
+import com.cs.sis_sdk.util.SISLogUtil;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -135,7 +136,7 @@ public class BleProxy {
             // 接收到数据
 //            broadcast(address, characteristic.getValue());
 //
-//            log("接收数据 <- " + DataUtil.byteArrayToHex(characteristic.getValue()));
+         //   SISLogUtil.d("接收数据 <- " + DataUtil.byteArrayToHex(characteristic.getValue()));
 //            byte[] bData = characteristic.getValue();
 //            int iBufferNum = characteristic.getValue().length;
 //

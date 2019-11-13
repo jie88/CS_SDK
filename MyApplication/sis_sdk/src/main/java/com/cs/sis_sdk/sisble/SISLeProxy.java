@@ -6,10 +6,13 @@ import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ble.api.DataUtil;
 import com.ble.ble.BleCallBack;
@@ -125,14 +128,23 @@ public class SISLeProxy {
     @Override
     public void onServicesDiscovered(final String address) {
       // 拿到服务，可进行数据通讯，不过有些手机还需要延时，不然会断线
+      mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          boolean ok = mBleService.enableNotification(address);// 开启0x1002的通知【接收数据】
+          SISLogUtil.d("开启通知" + ok);
+        }
+      },300);
 //      new Timer().schedule(new ServicesDiscoveredTask(address), 300, 100);
 //      SISLogUtil.d("发现服务" + address);
 //      MyApplication.iReConnect = 0;
-//      boolean bR = requestMtu(248);
-//      if(bR)
-//        bRealConnect = true;
-//      else
-//        bRealConnect = false;
+      boolean bR = requestMtu(248);
+      if(bR) {
+        bRealConnect = true;
+      }
+      else {
+        bRealConnect = false;
+      }
 //			System.out.println("requestMtu  bR = " + bR);
     }
 
@@ -159,9 +171,35 @@ public class SISLeProxy {
     @Override
     public void onCharacteristicChanged(String address, BluetoothGattCharacteristic characteristic) {
 // 接收到数据
+      SISLogUtil.d("接收数据 <- " + DataUtil.byteArrayToHex(characteristic.getValue()));
+//
     }
-
+    @Override
+    public void onMtuChanged(String address, int mtu, int status) {
+//            if (status == BluetoothGatt.GATT_SUCCESS) {
+      SISLogUtil.d( "onMtuChanged() - " + address  + "  status = " + status + ", MTU has been " + mtu);
+//            } else {
+//                Log.e(TAG, "onMtuChanged() - " + address + ", MTU request failed: " + status);
+//            }
+//      Intent intent = new Intent(ACTION_MTU_CHANGED);
+//      intent.putExtra(EXTRA_ADDRESS, address);
+//      intent.putExtra(EXTRA_MTU, mtu);
+//      intent.putExtra(EXTRA_STATUS, status);
+//      LocalBroadcastManager.getInstance(mBleService).sendBroadcast(intent);
+    }
   };
+
+
+  /**
+   * 请求更新MTU，会触发onMtuChanged()回调，如果请求成功，则APP一次最多可以发送MTU-3字节的数据，
+   * 如默认MTU为23，APP一次最多可以发送20字节的数据
+   * <p>
+   * 注：更新MTU要求手机系统版本不低于Android5.0
+   */
+  public boolean requestMtu(int mtu) {
+    return mBleService.requestMtu(linkDevice.getAddress(), mtu);
+  }
+
 
   public boolean bRealConnect = false;
 
