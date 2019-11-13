@@ -21,12 +21,31 @@ android {
         }
 
     }
+
+    signingConfigs {
+        release {
+            keyAlias 'zhq'
+            keyPassword '123456'
+            storeFile file('../程序签名/keycode')
+            storePassword '123456'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
+
+
+
 }
 
 repositories {
@@ -44,6 +63,6 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation "com.android.support:recyclerview-v7:${rootProject.ext.support}"
     implementation project(path: ':sis_sdk')
-    implementation files('libs/AndroidBleApi_V1.1.6.jar')
+//    implementation files('libs/AndroidBleApi_V1.1.6.jar')
 
 }
