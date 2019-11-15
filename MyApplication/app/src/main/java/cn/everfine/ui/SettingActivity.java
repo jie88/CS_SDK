@@ -214,7 +214,7 @@ public class SettingActivity extends Activity implements BleProxy.OnScanListener
 
     }
     private void initBleDialogAdapter(){
-        listAdapter = new SISQuickAdapter<String>(SettingActivity.this, mData, R.layout.view_item_ble_dialog) {
+        listAdapter = new SISQuickAdapter<String>(SettingActivity.this, mData, R.layout.view_item_ble) {
             @Override
             public void convert(ViewHolder helper, String item, final int position) {
 

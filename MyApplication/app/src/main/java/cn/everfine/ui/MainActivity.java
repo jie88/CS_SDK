@@ -43,6 +43,12 @@ public class MainActivity extends Activity {
 
                 intent.setClass(MainActivity.this, SetActivity2.class);
                 startActivity(intent);
+
+//                Intent intent = new Intent();
+////
+//                intent.setClass(MainActivity.this, BleTestActivity.class);
+//                startActivity(intent);
+
                 //finish();
             }
         });

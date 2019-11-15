@@ -11,6 +11,12 @@
   <application >
 
 
+    <activity android:name=".ui.ScanBleActivity"
+        android:theme="@android:style/Theme.DeviceDefault.Dialog.NoActionBar"
+        >
+
+    </activity>
+
     <service
         android:name="com.ble.ble.BleService"
         android:enabled="true"

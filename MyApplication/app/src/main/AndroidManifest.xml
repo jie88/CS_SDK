@@ -30,6 +30,8 @@
             android:name="cn.everfine.ui.SetActivity2"
             android:screenOrientation="portrait" />
 
+        <activity android:name="cn.everfine.ui.BleTestActivity"/>
+
     </application>
 
 

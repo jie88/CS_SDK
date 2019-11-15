@@ -3,50 +3,52 @@ package com.cs.sis_sdk.sisble;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.content.Intent;
+
+import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
+
 import android.text.TextUtils;
-import android.util.Log;
+
 
 import com.ble.api.DataUtil;
 import com.ble.ble.BleCallBack;
 import com.ble.ble.BleService;
 import com.cs.sis_sdk.util.SISLogUtil;
 
-import java.util.Timer;
-
 
 @SuppressLint("NewApi")
 @TargetApi(Build.VERSION_CODES.ECLAIR)
 public class SISLeProxy {
-  private static SISLeProxy mInstance;
+
   private BluetoothAdapter mBluetoothAdapter;
-  private boolean mScanning = false;
+  public boolean mScanning = false;
+
+  //蓝牙扫描时间
   public static int iBluetoothDelay = 5000;
+
+
   private Handler mHandler = new Handler();
 
 
   private BleService mBleService;
 
   //连接的蓝牙设备
-  private BluetoothDevice linkDevice;
+  public BluetoothDevice linkDevice;
 
-  private SISLeProxy() {
+
+  private Context mContext;
+
+  public SISLeProxy(Activity context) {
+    mContext = context;
     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
   }
 
-  public static SISLeProxy getInstance() {
-    if (mInstance == null) {
-      mInstance = new SISLeProxy();
-    }
-    return mInstance;
-  }
 
   private OnScanListener mOnScanListener;
 
@@ -134,15 +136,12 @@ public class SISLeProxy {
           boolean ok = mBleService.enableNotification(address);// 开启0x1002的通知【接收数据】
           SISLogUtil.d("开启通知" + ok);
         }
-      },300);
-//      new Timer().schedule(new ServicesDiscoveredTask(address), 300, 100);
-//      SISLogUtil.d("发现服务" + address);
-//      MyApplication.iReConnect = 0;
+      }, 300);
+
       boolean bR = requestMtu(248);
-      if(bR) {
+      if (bR) {
         bRealConnect = true;
-      }
-      else {
+      } else {
         bRealConnect = false;
       }
 //			System.out.println("requestMtu  bR = " + bR);
@@ -174,10 +173,11 @@ public class SISLeProxy {
       SISLogUtil.d("接收数据 <- " + DataUtil.byteArrayToHex(characteristic.getValue()));
 //
     }
+
     @Override
     public void onMtuChanged(String address, int mtu, int status) {
 //            if (status == BluetoothGatt.GATT_SUCCESS) {
-      SISLogUtil.d( "onMtuChanged() - " + address  + "  status = " + status + ", MTU has been " + mtu);
+      SISLogUtil.d("onMtuChanged() - " + address + "  status = " + status + ", MTU has been " + mtu);
 //            } else {
 //                Log.e(TAG, "onMtuChanged() - " + address + ", MTU request failed: " + status);
 //            }
@@ -191,8 +191,7 @@ public class SISLeProxy {
 
 
   /**
-   * 请求更新MTU，会触发onMtuChanged()回调，如果请求成功，则APP一次最多可以发送MTU-3字节的数据，
-   * 如默认MTU为23，APP一次最多可以发送20字节的数据
+   * 请求更新MTU，会触发onMtuChanged()回调，如果请求成功，则APP一次最多可以发送MTU-3字节的数据， 如默认MTU为23，APP一次最多可以发送20字节的数据
    * <p>
    * 注：更新MTU要求手机系统版本不低于Android5.0
    */
@@ -215,5 +214,28 @@ public class SISLeProxy {
     }
   }
 
+
+  public boolean isSupportBle() {
+    return Build.VERSION.SDK_INT >= 18 && mContext.getApplicationContext().getPackageManager().hasSystemFeature("android.hardware.bluetooth_le");
+  }
+
+  public void enableBluetooth() {
+    if (this.mBluetoothAdapter != null) {
+      this.mBluetoothAdapter.enable();
+    }
+
+  }
+
+  public void disableBluetooth() {
+    if (this.mBluetoothAdapter != null && this.mBluetoothAdapter.isEnabled()) {
+      this.mBluetoothAdapter.disable();
+    }
+
+  }
+
+
+  public boolean isBlueEnable() {
+    return this.mBluetoothAdapter != null && this.mBluetoothAdapter.isEnabled();
+  }
 
 }

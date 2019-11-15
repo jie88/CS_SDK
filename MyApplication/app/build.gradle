@@ -64,5 +64,6 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:${rootProject.ext.support}"
     implementation project(path: ':sis_sdk')
 //    implementation files('libs/AndroidBleApi_V1.1.6.jar')
+    api 'com.yanzhenjie:permission:2.0.0-rc3'
 
 }
