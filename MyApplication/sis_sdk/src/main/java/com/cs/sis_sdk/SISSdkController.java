@@ -24,7 +24,6 @@ public class SISSdkController {
 
   /**
    * 初始化
-   * @param activity
    */
   public void init(Activity activity) {
     mActivity = activity;
@@ -35,17 +34,17 @@ public class SISSdkController {
   /**
    * 退出
    */
-  public void destory(){
+  public void onDestroy() {
     unbindService();
   }
 
-  public void bindService() {
+  private void bindService() {
     //绑定服务
     mActivity.bindService(new Intent(mActivity, BleService.class), mConn, Activity.BIND_AUTO_CREATE);
 
   }
 
-  public void unbindService() {
+  private void unbindService() {
     //解绑服务
     mActivity.unbindService(mConn);
   }
