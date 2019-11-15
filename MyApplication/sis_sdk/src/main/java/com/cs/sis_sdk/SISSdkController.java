@@ -3,8 +3,12 @@ package com.cs.sis_sdk;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 
+import com.ble.ble.BleService;
 import com.cs.sis_sdk.sisble.SISLeProxy;
 import com.cs.sis_sdk.ui.ScanBleActivity;
 
@@ -18,14 +22,52 @@ public class SISSdkController {
   private SISLeProxy mLeProxy;
 
 
+  /**
+   * 初始化
+   * @param activity
+   */
   public void init(Activity activity) {
     mActivity = activity;
     mLeProxy = new SISLeProxy(mActivity);
+    bindService();
   }
+
+  /**
+   * 退出
+   */
+  public void destory(){
+    unbindService();
+  }
+
+  public void bindService() {
+    //绑定服务
+    mActivity.bindService(new Intent(mActivity, BleService.class), mConn, Activity.BIND_AUTO_CREATE);
+
+  }
+
+  public void unbindService() {
+    //解绑服务
+    mActivity.unbindService(mConn);
+  }
+
+  private final ServiceConnection mConn = new ServiceConnection() {
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+      mLeProxy.initBleService(service);
+    }
+  };
+
 
   public void scanLeDevice(boolean enable) {
     mLeProxy.scanLeDevice(enable);
   }
+
   public void setOnScanListener(SISLeProxy.OnScanListener scanListener) {
     mLeProxy.setOnScanListener(scanListener);
   }
@@ -56,8 +98,8 @@ public class SISSdkController {
   }
 
 
-  public void disconnected(){
-   //处理断开连接
+  public void disconnected() {
+    //处理断开连接
   }
 
   private static class SingletonHolder {

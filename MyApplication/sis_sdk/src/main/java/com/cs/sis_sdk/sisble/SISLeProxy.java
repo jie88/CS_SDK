@@ -120,6 +120,7 @@ public class SISLeProxy {
     @Override
     public void onConnectTimeout(String address) {
       // 连接超时，开启断线重连不会走这个回调方法
+      SISLogUtil.d("连接超时" + address);
 //      broadcast(ACTION_CONNECT_TIMEOUT, address);
 //      log("连接超时" + address);
 //      if(MyApplication.iReConnect < 3) {
@@ -129,6 +130,8 @@ public class SISLeProxy {
 
     @Override
     public void onServicesDiscovered(final String address) {
+      SISLogUtil.d("拿到服务" + address);
+
       // 拿到服务，可进行数据通讯，不过有些手机还需要延时，不然会断线
       mHandler.postDelayed(new Runnable() {
         @Override
@@ -149,6 +152,8 @@ public class SISLeProxy {
 
     @Override
     public void onCharacteristicWrite(String address, BluetoothGattCharacteristic characteristic, int status) {
+
+      SISLogUtil.d("写数据" + address);
       /*
        * if (BluetoothGatt.GATT_SUCCESS == status) { }
        */
@@ -158,6 +163,7 @@ public class SISLeProxy {
 
     @Override
     public void onDisconnected(String address) {
+      SISLogUtil.d("设备已断开" + address);
       // 断线
 //      broadcast(ACTION_GATT_DISCONNECTED, address);
 //
@@ -206,7 +212,7 @@ public class SISLeProxy {
   public boolean connect(BluetoothDevice bleDevice) {
     linkDevice = bleDevice;
     bRealConnect = false;
-    if (TextUtils.isEmpty(linkDevice.getAddress())) {
+    if (!TextUtils.isEmpty(linkDevice.getAddress())) {
       SISLogUtil.d("connect() = " + linkDevice.getAddress());
       return mBleService.connect(bleDevice.getAddress(), false);// boolean型参数代表是否开启断线重连
     } else {
