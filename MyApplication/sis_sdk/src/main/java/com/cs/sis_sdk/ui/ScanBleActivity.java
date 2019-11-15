@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.AdapterView;
+
 import android.widget.ListView;
 
 import com.cs.sis_sdk.R;

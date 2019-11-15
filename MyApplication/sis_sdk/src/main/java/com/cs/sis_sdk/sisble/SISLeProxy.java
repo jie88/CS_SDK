@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import com.ble.api.DataUtil;
 import com.ble.ble.BleCallBack;
 import com.ble.ble.BleService;
+import com.cs.sis_sdk.SISSdkController;
 import com.cs.sis_sdk.util.SISLogUtil;
 
 
@@ -120,6 +121,7 @@ public class SISLeProxy {
     @Override
     public void onConnectTimeout(String address) {
       // 连接超时，开启断线重连不会走这个回调方法
+      SISSdkController.getInstance().showToast("连接超时");
       SISLogUtil.d("连接超时" + address);
 //      broadcast(ACTION_CONNECT_TIMEOUT, address);
 //      log("连接超时" + address);

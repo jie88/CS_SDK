@@ -40,18 +40,12 @@ public class SetActivity2 extends BaseActivity {
     //初始化SDK
     SISSdkController.getInstance().init(SetActivity2.this);
     init();
-
-
   }
-
-
   private void init() {
-
     initSetAdapter();
     initDialogEdit();
     setList = (ListView) findViewById(R.id.setting_list);
     setList.setAdapter(setListAdapter);
-
     imageback = (ImageView) findViewById(R.id.back);
     imageback.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -60,14 +54,10 @@ public class SetActivity2 extends BaseActivity {
       }
     });
   }
-
   private void initDialogEdit() {
 
   }
-
   private void initSetAdapter() {
-
-
     String[] left = {getString(R.string.set_0), getString(R.string.disconnect),
         getString(R.string.setdefault), getString(R.string.setauto)
         , getString(R.string.search), getString(R.string.readflash)
@@ -76,8 +66,6 @@ public class SetActivity2 extends BaseActivity {
     String[] right = {"", "", "200.0"
         , "5000.0", "", ""
         , "1", "DC", ""};
-
-
     for (int i = 0; i < left.length; i++) {
       SetBean bean = new SetBean(left[i], right[i]);
       setDatas.add(bean);
@@ -96,7 +84,6 @@ public class SetActivity2 extends BaseActivity {
       }
     };
   }
-
   private void listOnclick(final SetBean item, int position) {
 
     switch (position) {
@@ -128,12 +115,8 @@ public class SetActivity2 extends BaseActivity {
         //开始扫描
         SISSdkController.getInstance().getElec();
         break;
-
     }
-
   }
-
-
   private void showEditDialog(final SetBean item) {
     final EditText editText = new EditText(mContext);
     DialogUtil.showEditDialog(mContext, editText, new DialogInterface.OnClickListener() {
@@ -144,7 +127,6 @@ public class SetActivity2 extends BaseActivity {
       }
     });
   }
-
   @Override
   protected void onDestroy() {
     SISSdkController.getInstance().onDestroy();

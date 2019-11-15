@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import com.ble.ble.BleService;
 import com.cs.sis_sdk.sisble.SISLeProxy;
@@ -87,6 +88,7 @@ public class SISSdkController {
     if (mLeProxy.isSupportBle()) {
       //设备支持蓝牙
       if (mLeProxy.isBlueEnable()) {
+
         //设备蓝牙已开启
         mActivity.startActivity(ScanBleActivity.creatIntent(mActivity));
       } else {
@@ -107,6 +109,17 @@ public class SISSdkController {
 
   public void disconnected() {
     //处理断开连接
+
+  }
+
+  public void showToast(final String toast){
+    mActivity.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        Toast.makeText(mActivity,toast,Toast.LENGTH_SHORT).show();
+      }
+    });
+
   }
 
   /*
