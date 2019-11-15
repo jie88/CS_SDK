@@ -37,10 +37,8 @@ public class SetActivity2 extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_setting);
-
     //初始化SDK
     SISSdkController.getInstance().init(SetActivity2.this);
-
     init();
 
 
@@ -145,14 +143,9 @@ public class SetActivity2 extends BaseActivity {
     });
   }
 
-
-//
-//  /**
-//   * 连接蓝牙
-//   */
-//  private void connectBle(BluetoothDevice device) {
-//    if (null != device) {
-//      SISLeProxy.getInstance().connect(device);
-//    }
-//  }
+  @Override
+  protected void onDestroy() {
+    SISSdkController.getInstance().onDestroy();
+    super.onDestroy();
+  }
 }
