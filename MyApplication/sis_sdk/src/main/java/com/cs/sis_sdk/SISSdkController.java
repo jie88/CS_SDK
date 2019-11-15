@@ -123,11 +123,12 @@ public class SISSdkController {
 
   public void getElec() {
 
-    if(mLeProxy.bRealConnect){
+    if (mLeProxy.bRealConnect) {
       //链接成功
-      int ret=  spic_command.readBatteryLevel(commType,mLeProxy.linkDevice.getName());
-//    System.out.println("getElec"+ret);
-    }else {
+      int ret = spic_command.readBatteryLevel(commType, mLeProxy.linkDevice.getName());
+      SISLogUtil.d("电量：" + ret);
+      //    System.out.println("getElec"+ret);
+    } else {
       //还没链接
       SISLogUtil.d("请先链接或等待链接成功");
     }
