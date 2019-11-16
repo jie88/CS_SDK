@@ -1,4 +1,4 @@
-package com.everfine.sis_sdk.ui.base;
+package com.everfine.ui.base;
 
 import android.content.Context;
 import android.graphics.Bitmap;

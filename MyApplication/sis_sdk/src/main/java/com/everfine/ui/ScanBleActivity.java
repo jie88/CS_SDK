@@ -1,4 +1,4 @@
-package com.everfine.sis_sdk.ui;
+package com.everfine.ui;
 
 
 import android.app.Activity;
@@ -14,11 +14,11 @@ import android.widget.ListView;
 
 import com.cs.sis_sdk.R;
 
-import com.everfine.sis_sdk.SISSdkController;
-import com.everfine.sis_sdk.ble.LeProxy;
-import com.everfine.sis_sdk.ui.base.SISQuickAdapter;
-import com.everfine.sis_sdk.ui.base.ViewHolder;
-import com.everfine.sis_sdk.util.SISLogUtil;
+import com.everfine.SISSdkController;
+import com.everfine.ble.LeProxy;
+import com.everfine.ui.base.SISQuickAdapter;
+import com.everfine.ui.base.ViewHolder;
+import com.everfine.util.SISLogUtil;
 
 import java.util.ArrayList;
 import java.util.List;

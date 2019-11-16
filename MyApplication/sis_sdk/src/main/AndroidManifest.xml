@@ -11,7 +11,7 @@
   <application >
 
 
-    <activity android:name="com.everfine.sis_sdk.ui.ScanBleActivity"
+    <activity android:name="com.everfine.ui.ScanBleActivity"
         android:theme="@android:style/Theme.DeviceDefault.Dialog.NoActionBar"
         >
 

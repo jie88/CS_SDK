@@ -1,4 +1,4 @@
-package com.everfine.sis_sdk.ble;
+package com.everfine.ble;
 
 
 import android.annotation.SuppressLint;
@@ -19,8 +19,8 @@ import android.text.TextUtils;
 import com.ble.api.DataUtil;
 import com.ble.ble.BleCallBack;
 import com.ble.ble.BleService;
-import com.everfine.sis_sdk.SISSdkController;
-import com.everfine.sis_sdk.util.SISLogUtil;
+import com.everfine.SISSdkController;
+import com.everfine.util.SISLogUtil;
 
 
 @SuppressLint("NewApi")

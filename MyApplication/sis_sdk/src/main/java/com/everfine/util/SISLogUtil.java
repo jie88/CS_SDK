@@ -1,4 +1,4 @@
-package com.everfine.sis_sdk.util;
+package com.everfine.util;
 
 import android.text.TextUtils;
 

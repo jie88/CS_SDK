@@ -1,4 +1,4 @@
-package com.everfine.sis_sdk.ble;
+package com.everfine.ble;
 
 import android.app.Activity;
 import android.util.Log;

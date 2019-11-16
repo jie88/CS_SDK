@@ -1,9 +1,9 @@
-package com.everfine.sis_sdk.ble;
+package com.everfine.ble;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.everfine.sis_sdk.SISSdkController;
+import com.everfine.SISSdkController;
 
 import java.io.IOException;
 import java.io.InputStream;

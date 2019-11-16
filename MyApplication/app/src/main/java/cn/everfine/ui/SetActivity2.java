@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 
-import com.everfine.sis_sdk.SISSdkController;
+import com.everfine.SISSdkController;
 import com.example.administrator.myapplication.R;
 
 import java.util.ArrayList;

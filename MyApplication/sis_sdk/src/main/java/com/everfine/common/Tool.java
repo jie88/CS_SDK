@@ -1,4 +1,4 @@
-package com.everfine.sis_sdk.common;
+package com.everfine.common;
 
 import android.annotation.SuppressLint;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package com.everfine.sis_sdk;
+package com.everfine;
 
 
 import android.app.Activity;
@@ -10,11 +10,11 @@ import android.os.IBinder;
 import android.widget.Toast;
 
 import com.ble.ble.BleService;
-import com.everfine.sis_sdk.ble.LeProxy;
-import com.everfine.sis_sdk.ble.SPIC_Command;
-import com.everfine.sis_sdk.common.Common_Constant;
-import com.everfine.sis_sdk.ui.ScanBleActivity;
-import com.everfine.sis_sdk.util.SISLogUtil;
+import com.everfine.ble.LeProxy;
+import com.everfine.ble.SPIC_Command;
+import com.everfine.common.Common_Constant;
+import com.everfine.ui.ScanBleActivity;
+import com.everfine.util.SISLogUtil;
 
 
 /**

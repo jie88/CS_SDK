@@ -3,7 +3,7 @@
  * @AUTHOR:Cai Zehui
  * @DATE:2015-1-14 ����10:29:49
  **/
-package com.everfine.sis_sdk.ble;
+package com.everfine.ble;
 
 import android.util.Log;
 

@@ -4,7 +4,7 @@
  * @AUTHOR:Cai Zehui
  * @DATE:2015-1-12
  **/
-package com.everfine.sis_sdk.common;
+package com.everfine.common;
 /*******************************************
  * @CLASS:Command
  * @DESCRIPTION:
