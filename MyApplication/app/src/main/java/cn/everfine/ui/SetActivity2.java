@@ -112,7 +112,8 @@ public class SetActivity2 extends BaseActivity {
         break;
       case 8:
         //开始扫描
-        SISSdkController.getInstance().getElec();
+       // SISSdkController.getInstance().getElec();
+        SISSdkController.getInstance().getElecCs();
         break;
     }
   }

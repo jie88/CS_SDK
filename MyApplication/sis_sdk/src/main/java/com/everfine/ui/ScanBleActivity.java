@@ -57,10 +57,10 @@ public class ScanBleActivity extends Activity {
       public void convert(ViewHolder helper, final BluetoothDevice item, final int position) {
         String name = item.getName();
 
-        helper.setText(R.id.bleName, " mac: " + item.getAddress());
+        helper.setText(R.id.bleName,  item.getName());
 
         if (TextUtils.isEmpty(name)) {
-          helper.setText(R.id.bleName, " mac: " + item.getAddress());
+          helper.setText(R.id.bleName, item.getName());
         } else {
 
         }

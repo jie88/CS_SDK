@@ -9,11 +9,14 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 
 import com.ble.api.DataUtil;
@@ -22,6 +25,8 @@ import com.ble.ble.BleService;
 import com.everfine.SISSdkController;
 import com.everfine.util.SISLogUtil;
 
+import java.util.ArrayList;
+import com.everfine.core.Tool;
 
 @SuppressLint("NewApi")
 @TargetApi(Build.VERSION_CODES.ECLAIR)
@@ -29,22 +34,14 @@ public class LeProxy {
 
   private BluetoothAdapter mBluetoothAdapter;
   public boolean mScanning = false;
-
   //蓝牙扫描时间
   public static int iBluetoothDelay = 5000;
-
-
   private Handler mHandler = new Handler();
-
-
   private BleService mBleService;
-
   //连接的蓝牙设备
-  public BluetoothDevice linkDevice;
-
-
+  public  static BluetoothDevice linkDevice;
   private Context mContext;
-
+  public static boolean bRealConnect = false;
   public LeProxy(Activity context) {
     mContext = context;
     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -179,7 +176,61 @@ public class LeProxy {
     public void onCharacteristicChanged(String address, BluetoothGattCharacteristic characteristic) {
 // 接收到数据
       SISLogUtil.d("接收数据 <- " + DataUtil.byteArrayToHex(characteristic.getValue()));
-//
+
+      broadcast(address, characteristic.getValue());
+
+      log("接收数据 <- " + DataUtil.byteArrayToHex(characteristic.getValue()));
+      byte[] bData = characteristic.getValue();
+      int iBufferNum = characteristic.getValue().length;
+
+      if(bData[0] == 0x7B && bData[1] == 0x7B){
+        iNum = 0;
+      }
+      for(int i = 0;i<iBufferNum;i++){
+        byBuffer[iNum++] = bData[i];
+      }
+      if(iNum > 4 && byBuffer[4] == SPIC_Command.CMD_READ_FLASH){
+        //   MyApplication.readFlashProcess = 100*iNum/MyApplication.readFlashNum;
+      }
+
+      int iFindHeadPos = 0;
+      if (byBuffer[iNum - 2] == 0x7D
+              && byBuffer[iNum - 1] == 0x7D){
+//				log("接收数据  ----iNum = " + iNum + " == " + bytesToHexString(byBuffer,iNum));
+        for (int i = iNum - 3; i >= 1; i--) {
+          if (byBuffer[i - 1] == 0x7B && byBuffer[i] == 0x7B) {
+            iFindHeadPos = i - 1;
+            break;
+          }
+        }
+        System.out.println("iFindHeadPos = " + iFindHeadPos + "  iNum = " + iNum);
+
+        byte cmd = byBuffer[iFindHeadPos + 4];
+        ReadMeterSocketOneData oneData = new ReadMeterSocketOneData(
+                iFindHeadPos, byBuffer, iNum - iFindHeadPos);
+
+        if (oneData.isDataOk()) {
+          Log.d(TAG, "oneData is ok! CMD is " + Integer.toHexString(cmd&0xff));
+          if (mListSocketOneData.size() >= 10)
+            mListSocketOneData.remove(0);
+          mListSocketOneData.add(oneData);
+          Log.d(TAG, "oneData is ok! CMD is " +  Tool.byteArrayToAsciiString(mListSocketOneData.get(0).para));
+        }
+        else {
+          mListSocketOneData.add(oneData);
+          Log.d(TAG, "oneData is ERROR!");
+        }
+        iNum = 0;
+      }
+    }
+    public byte[] byBuffer = new byte[4194304];
+    public int iNum = 0;
+
+    public ArrayList<ReadMeterSocketOneData> mListSocketOneData = new ArrayList<ReadMeterSocketOneData>();
+
+    private final static String TAG = "LeProxy";
+    private void log(String msg) {
+      Log.i("LeProxy", "" + msg);
     }
 
     @Override
@@ -208,7 +259,7 @@ public class LeProxy {
   }
 
 
-  public boolean bRealConnect = false;
+
 
   // 连接设备
   public boolean connect(BluetoothDevice bleDevice) {
@@ -256,5 +307,34 @@ public class LeProxy {
   public boolean isBlueEnable() {
     return this.mBluetoothAdapter != null && this.mBluetoothAdapter.isEnabled();
   }
+  private void broadcast(String action, String address) {
+    Intent intent = new Intent(action);
+    intent.putExtra(EXTRA_ADDRESS, address);
+    LocalBroadcastManager.getInstance(mBleService).sendBroadcast(intent);
+  }
+
+  private void broadcast(String address, byte[] data) {
+    Intent intent = new Intent(ACTION_DATA_AVAILABLE);
+    intent.putExtra(EXTRA_ADDRESS, address);
+    intent.putExtra(EXTRA_DATA, data);
+    LocalBroadcastManager.getInstance(mBleService).sendBroadcast(intent);
+  }
+
+  public static final String ACTION_CONNECT_TIMEOUT = ".LeProxy.ACTION_CONNECT_TIMEOUT";
+  public static final String ACTION_CONNECT_ERROR = ".LeProxy.ACTION_CONNECT_ERROR";
+  public static final String ACTION_GATT_CONNECTED = ".LeProxy.ACTION_GATT_CONNECTED";
+  public static final String ACTION_GATT_DISCONNECTED = ".LeProxy.ACTION_GATT_DISCONNECTED";
+  public static final String ACTION_GATT_SERVICES_DISCOVERED = ".LeProxy.ACTION_GATT_SERVICES_DISCOVERED";
+  public static final String ACTION_DATA_AVAILABLE = ".LeProxy.ACTION_DATA_AVAILABLE";
+
+  public static final String EXTRA_ADDRESS = ".LeProxy.EXTRA_ADDRESS";
+  public static final String EXTRA_DATA = ".LeProxy.EXTRA_DATA";
+
+  public static final String ACTION_MTU_CHANGED = ".LeProxy.ACTION_MTU_CHANGED";
+
+  public static final String EXTRA_UUID = ".LeProxy.EXTRA_UUID";
+  public static final String EXTRA_RSSI = ".LeProxy.EXTRA_RSSI";
+  public static final String EXTRA_MTU = ".LeProxy.EXTRA_MTU";
+  public static final String EXTRA_STATUS = ".LeProxy.EXTRA_STATUS";
 
 }
