@@ -1,4 +1,4 @@
-package com.cs.sis_sdk.ui.base;
+package com.everfine.sis_sdk.ui.base;
 
 import android.content.Context;
 import android.view.LayoutInflater;

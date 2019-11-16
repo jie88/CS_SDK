@@ -9,8 +9,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.cs.sis_sdk.SISSdkController;
 
+import com.everfine.sis_sdk.SISSdkController;
 import com.example.administrator.myapplication.R;
 
 import java.util.ArrayList;
@@ -20,7 +20,6 @@ import cn.everfine.base.BaseActivity;
 import cn.everfine.base.SISQuickAdapter;
 import cn.everfine.base.ViewHolder;
 import cn.everfine.bean.SetBean;
-
 import cn.everfine.util.DialogUtil;
 
 

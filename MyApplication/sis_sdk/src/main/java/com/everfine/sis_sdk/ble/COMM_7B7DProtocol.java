@@ -3,6 +3,8 @@ package com.everfine.sis_sdk.ble;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import com.everfine.sis_sdk.SISSdkController;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -107,7 +109,7 @@ public class COMM_7B7DProtocol {
 		if (commType == COMM_BT)
 			try {
 
-					LeProxy.getInstance().send(byteOut, iOutN);
+					SISSdkController.getInstance().mLeProxy.send(byteOut, iOutN);
 
 			} catch (Exception e) {
 				Log.d(TAG, "LeP BT Write exception e = " + e.toString());

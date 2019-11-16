@@ -1,4 +1,4 @@
-package com.cs.sis_sdk;
+package com.everfine.sis_sdk;
 
 
 import android.app.Activity;
@@ -10,11 +10,11 @@ import android.os.IBinder;
 import android.widget.Toast;
 
 import com.ble.ble.BleService;
-import com.cs.sis_sdk.sisble.SISLeProxy;
-import com.cs.sis_sdk.ui.ScanBleActivity;
-import com.cs.sis_sdk.util.SISLogUtil;
+import com.everfine.sis_sdk.ble.LeProxy;
 import com.everfine.sis_sdk.ble.SPIC_Command;
 import com.everfine.sis_sdk.common.Common_Constant;
+import com.everfine.sis_sdk.ui.ScanBleActivity;
+import com.everfine.sis_sdk.util.SISLogUtil;
 
 
 /**
@@ -23,7 +23,7 @@ import com.everfine.sis_sdk.common.Common_Constant;
 public class SISSdkController {
 
   private Activity mActivity;
-  private SISLeProxy mLeProxy;
+  public LeProxy mLeProxy;
 
   public static int commType = Common_Constant.COMM_BT;
   private SPIC_Command spic_command;
@@ -33,7 +33,7 @@ public class SISSdkController {
    */
   public void init(Activity activity) {
     mActivity = activity;
-    mLeProxy = new SISLeProxy(mActivity);
+    mLeProxy = new LeProxy(mActivity);
 
     spic_command = new SPIC_Command(null, null);
 
@@ -76,7 +76,7 @@ public class SISSdkController {
     mLeProxy.scanLeDevice(enable);
   }
 
-  public void setOnScanListener(SISLeProxy.OnScanListener scanListener) {
+  public void setOnScanListener(LeProxy.OnScanListener scanListener) {
     mLeProxy.setOnScanListener(scanListener);
   }
 

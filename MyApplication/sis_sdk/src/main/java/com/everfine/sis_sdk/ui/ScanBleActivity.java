@@ -1,4 +1,4 @@
-package com.cs.sis_sdk.ui;
+package com.everfine.sis_sdk.ui;
 
 
 import android.app.Activity;
@@ -13,11 +13,12 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.cs.sis_sdk.R;
-import com.cs.sis_sdk.SISSdkController;
-import com.cs.sis_sdk.sisble.SISLeProxy;
-import com.cs.sis_sdk.ui.base.SISQuickAdapter;
-import com.cs.sis_sdk.ui.base.ViewHolder;
-import com.cs.sis_sdk.util.SISLogUtil;
+
+import com.everfine.sis_sdk.SISSdkController;
+import com.everfine.sis_sdk.ble.LeProxy;
+import com.everfine.sis_sdk.ui.base.SISQuickAdapter;
+import com.everfine.sis_sdk.ui.base.ViewHolder;
+import com.everfine.sis_sdk.util.SISLogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class ScanBleActivity extends Activity {
 //    bindService(new Intent(this, BleService.class), mConn, BIND_AUTO_CREATE);
 
     //添加蓝牙扫描回调
-    SISSdkController.getInstance().setOnScanListener(new SISLeProxy.OnScanListener() {
+    SISSdkController.getInstance().setOnScanListener(new LeProxy.OnScanListener() {
       @Override
       public void onScanStart() {
 
