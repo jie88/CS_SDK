@@ -112,11 +112,11 @@ public class SISSdkController {
 
   }
 
-  public void showToast(final String toast){
+  public void showToast(final String toast) {
     mActivity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        Toast.makeText(mActivity,toast,Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivity, toast, Toast.LENGTH_SHORT).show();
       }
     });
 
@@ -138,8 +138,11 @@ public class SISSdkController {
 
     if (mLeProxy.bRealConnect) {
       //链接成功
-      int ret = spic_command.readBatteryLevel(commType, mLeProxy.linkDevice.getName());
-      SISLogUtil.d("电量：" + ret);
+      byte[] byteOut = {0x7b, 0x7b, (byte) 0xB2, (byte) 0xcc, (byte) 0xD0, 0x00, 0x00, (byte) 0xB2, 0x7d, 0x7d};
+      boolean succ = mLeProxy.send(byteOut, 0);
+
+       int ret = spic_command.readBatteryLevel(commType, mLeProxy.linkDevice.getName());
+      SISLogUtil.d("电量发送：" + succ);
       //    System.out.println("getElec"+ret);
     } else {
       //还没链接
