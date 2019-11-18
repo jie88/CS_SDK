@@ -7,14 +7,14 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class Tool {
-	
-	
+
+
 	public static final String Tag = "SIS-20";
 	static DecimalFormat df5 = new DecimalFormat("#####0.0000000000");
 	public static float fFomat(float f){
 		return Float.parseFloat(df5.format(f));
 	}
-	
+
 	public static float getMax(float[] list, int num) {
 		if (list == null || num > list.length) {
 			return 0.0f;
@@ -141,7 +141,7 @@ public class Tool {
 		int i = Float.floatToIntBits(f);
 		return intToByte(i);
 	}
-	
+
 	public static String printStringArrayToString(String[] s)
 	{
 		if(s ==null)
@@ -151,7 +151,7 @@ public class Tool {
 			str+=ss+",";
 		return str;
 	}
-	
+
 	public static String printfloatToString(float[] f) {
 		if(f==null)
 			return "";
@@ -165,7 +165,7 @@ public class Tool {
 			str+=f[i]+",";
 		return str;
 	}
-	
+
 	public static String saveFloatToFile(float[] f, String filename) {
 		int num = f.length;
 		if(num>100)
@@ -183,7 +183,7 @@ public class Tool {
 		str += Integer.toHexString(b[i]&0xff)+" ";
 		return str;
 	}
-	
+
 	public static String byteArrayToAsciiString(byte[] b) {
 		String str = "";
 		for(int i =0; i<b.length; i++)

@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 
+import com.ble.utils.ToastUtil;
 import com.everfine.SISSdkController;
+import com.everfine.callback.BatteryInfoCallback;
 import com.example.administrator.myapplication.R;
 
 import java.util.ArrayList;
@@ -113,7 +115,12 @@ public class SetActivity2 extends BaseActivity {
       case 8:
         //开始扫描
        // SISSdkController.getInstance().getElec();
-        SISSdkController.getInstance().getElecCs();
+        SISSdkController.getInstance().getElecCs(new BatteryInfoCallback() {
+          @Override
+          public void onBatteryInfoCallback(int battery, String msg) {
+            ToastUtil.show(mContext,battery+msg);
+          }
+        });
         break;
     }
   }

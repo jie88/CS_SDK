@@ -10,8 +10,10 @@ import android.os.IBinder;
 import android.widget.Toast;
 
 import com.ble.ble.BleService;
+import com.everfine.ble.BleConstant;
 import com.everfine.ble.LeProxy;
 import com.everfine.ble.SPIC_Command;
+import com.everfine.callback.BatteryInfoCallback;
 import com.everfine.common.Common_Constant;
 import com.everfine.ui.ScanBleActivity;
 import com.everfine.util.SISLogUtil;
@@ -22,11 +24,23 @@ import com.everfine.util.SISLogUtil;
  */
 public class SISSdkController {
 
+
+  public void setBatteryInfoCallback(BatteryInfoCallback batteryInfoCallback) {
+    this.batteryInfoCallback = batteryInfoCallback;
+  }
+
+  //电量信息回调接口
+  private BatteryInfoCallback batteryInfoCallback;
+
+
   private Activity mActivity;
   public LeProxy mLeProxy;
 
+
+  //待删除
   public static int commType = Common_Constant.COMM_BT;
   private SPIC_Command spic_command;
+  //待删除
 
   /**
    * 初始化
@@ -35,6 +49,15 @@ public class SISSdkController {
     mActivity = activity;
     mLeProxy = new LeProxy(mActivity);
 
+    mLeProxy.setOnCallbackListener(new LeProxy.OnCallbackListener() {
+      @Override
+      public void handleData(byte[] data) {
+        //收到蓝牙的数据
+        handleBleData(data);
+      }
+    });
+
+    // 尽量不要这个了
     spic_command = new SPIC_Command(null, null);
 
     bindService();
@@ -112,6 +135,98 @@ public class SISSdkController {
 
   }
 
+
+  private void handleBleData(byte[] data) {
+    // 处理蓝牙数据
+    if (null == data) {
+      return;
+    }
+    if (checkDataHead(data)) {
+      //判断返回数据帧头是否符合标准
+      if (checkDataSource(data)) {
+        //判断返回数据的目的地址 与发送数据的源地址是否一致
+        if (checkDataDst(data)) {
+          //判断返回数据的源地址 与发送数据的目的地址 是否一致
+
+          if (data[4] == BleConstant.BT_DATA_READ_BATTERY_INFO) {
+            //电量信息
+            handleBatteryInfo(data);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * 处理电池电量信息
+   *
+   *
+   * 字节1为电池电量，探头对电池电量处理成0~100后发给主机， 如果探头没有电池，则每次都发送100。
+   *
+   * 字节2为电池状态： 0x00 表示不充电且电池电压正常 0x01 表示不充电且电池欠压 0x02 表示充电中且未充满 0x03 表示充电中且已充满
+   */
+  private void handleBatteryInfo(byte[] data) {
+    if (null != batteryInfoCallback) {
+      if (null != data) {
+        final int battery = data[7];
+        String msg = "";
+        switch (data[8]) {
+          case 0x00:
+            msg = "不充电且电池电压正常";
+            break;
+          case 0x01:
+            msg = "不充电且电池欠压";
+            break;
+          case 0x02:
+            msg = "充电中且未充满";
+            break;
+          case 0x03:
+            msg = "充电中且已充满";
+            break;
+        }
+
+        if (null != mActivity) {
+          //抛到主线程
+          final String callMsg = msg;
+          mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              batteryInfoCallback.onBatteryInfoCallback(battery, callMsg);
+            }
+          });
+        } else {
+          batteryInfoCallback.onBatteryInfoCallback(battery, msg);
+        }
+
+      }
+    }
+
+  }
+
+
+  /**
+   * 判断返回数据帧头是否符合标准
+   */
+  private boolean checkDataHead(byte[] data) {
+    return data[0] == BleConstant.BT_DATA_HEAD_0 ||
+        data[1] == BleConstant.BT_DATA_HEAD_1;
+  }
+
+  /**
+   * //判断返回数据的目的地址 与发送数据的源地址是否一致
+   */
+  private boolean checkDataSource(byte[] data) {
+    return data[2] == BleConstant.BT_DATA_SOURCE_ADDRESS;
+  }
+
+  /**
+   * //判断返回数据的源 与发送数据的目的地址 是否一致
+   */
+  private boolean checkDataDst(byte[] data) {
+    return data[3] == BleConstant.BT_DATA_DST_ADDRESS;
+  }
+
+
   public void showToast(final String toast) {
     mActivity.runOnUiThread(new Runnable() {
       @Override
@@ -133,7 +248,14 @@ public class SISSdkController {
    * BT_Communication.msgExcute处理命令
    * getChargeThread.start
    */
-  public void getElecCs() {
+  public void getElecCs(BatteryInfoCallback callback) {
+
+    batteryInfoCallback=callback;
+    if (true) {
+      byte[] byteIn = {(byte) 0x7b, (byte) 0x7b, (byte) 0x30, (byte) 0xB2, (byte) 0xD0, 0x00, 0x02, (byte) 0x53, (byte) 0x02, (byte) 0x09, 0x7d, 0x7d};
+      handleBleData(byteIn);
+      return;
+    }
 
     if (mLeProxy.bRealConnect) {
       //链接成功
@@ -143,12 +265,15 @@ public class SISSdkController {
       // int ret = spic_command.readBatteryLevel(commType, mLeProxy.linkDevice.getName());
       SISLogUtil.d("电量发送：" + succ);
       //    System.out.println("getElec"+ret);
+
+
     } else {
       //还没链接
       SISLogUtil.d("请先链接或等待链接成功");
     }
 //
   }
+
   public void getElec() {
 
     if (mLeProxy.bRealConnect) {
@@ -156,7 +281,7 @@ public class SISSdkController {
       byte[] byteOut = {0x7b, 0x7b, (byte) 0xB2, (byte) 0xcc, (byte) 0xD0, 0x00, 0x00, (byte) 0xB2, 0x7d, 0x7d};
       boolean succ = mLeProxy.send(byteOut, 0);
 
-       int ret = spic_command.readBatteryLevel(commType, mLeProxy.linkDevice.getName());
+      // int ret = spic_command.readBatteryLevel(commType, mLeProxy.linkDevice.getName());
       SISLogUtil.d("电量发送：" + succ);
       //    System.out.println("getElec"+ret);
     } else {
@@ -167,9 +292,9 @@ public class SISSdkController {
 //
 
   }
-public void test()
-{
-  //固定积分200ms测试
+
+  public void test() {
+    //固定积分200ms测试
 //  G609979CM1391150 sendCommand. Cmd = d5
 //  I/System.out: LeProxy send sData = 7B 7B B2 30 D5 00 09 00 01 01 00 00 48 43 20 01 6E 7D 7D 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 //  D/BleService: setCharacteristicWriteType() - uuid: 00001001-0000-1000-8000-00805f9b34fb[write_no_response]
@@ -185,13 +310,13 @@ public void test()
 //  I/System.out: iFindHeadPos = 0  iNum = 587
 //  I/System.out: ReadMeterSocketOneData decode  = 0
 
-}
+  }
 
-  public static   int average_number = 1;
+  public static int average_number = 1;
   public static String DC = "DC";
   public static String S_Connect = "BT";
-  public  int Zero()
-  {
+
+  public int Zero() {
 
     // LeProxy send sData = 7B 7B B2 30 D5 00 09 00 01 01 00 00 48 43 20 01 6E 7D 7D
 //    接收数据 <- 7B 7B 30 B2 D5 05 4C B8 11 BE 11 58 11 95 12 D1 11 08 12 CF 12 56 11 C5 11 D2 11 32 11 CD 12 67 11 98 12 BA 11 CF 11 53 12 2A 12 B8 11 CB 11 4E 11 93 13 27 12 B7 11 C8 11 6F 12 36 12 FD 11 03 12 AA 11 97 12 6D 11 F6 12 66 12 D4 11 5F 12 69 12 D5 11 1E 12 14 11 45 12 24 12 D2 12 37 12 B1 11 D1 11 0A 12 6F 11 08 13 C9 11 F4 11 96 12 A1 12 1A 12 4C 12 16 11 23 12 C7 11 BE 11 AA 12 C6 11 D6 11 9F 12 47 12 19 12 0F 12 EA 11 59 12 36 11 DA 11 89 12 78 11 E4 11 19 13 B0 11 EE 11 A7 11 45 12 26 12 1E 12 4F 12 CF 11 9C 11 6C 12 6A 11 C4 11 F4 11 29 11 6D 12 F1 11 32 12 0B 14 20 12 9D 12 0A 12 F2 11 AF 11 5E 12 3B 12 64 12 4B 13 71 11 92 12 B1 11 1C 12 76 11 AD 11 32 12 A6 11 77 12 49 12 AF 11 ED 11 14 12 23 12 16 12 EE 11 EE 11 CE 11
@@ -206,8 +331,8 @@ public void test()
     //固定时间校零
     if (mLeProxy.bRealConnect) {
       //链接成功
-      byte[] byteOut = {0x7b, 0x7b, (byte) 0xB2, (byte) 0x30, (byte) 0xD5, 0x00, 0x09, 0x00,0x01,0x01,0x00,
-              0x00,0x48,0x43,0x20,0x01,(byte) 0x6E, 0x7D, 0x7D};
+      byte[] byteOut = {0x7b, 0x7b, (byte) 0xB2, (byte) 0x30, (byte) 0xD5, 0x00, 0x09, 0x00, 0x01, 0x01, 0x00,
+          0x00, 0x48, 0x43, 0x20, 0x01, (byte) 0x6E, 0x7D, 0x7D};
       boolean succ = mLeProxy.send(byteOut, 0);
 
       // int ret = spic_command.readBatteryLevel(commType, mLeProxy.linkDevice.getName());
@@ -217,15 +342,15 @@ public void test()
       //还没链接
       SISLogUtil.d("请先链接或等待链接成功");
     }
-  return 0;
+    return 0;
   }
+
   //Impl_sampleAD里面sent
-  public int ZeroAll()
-  {
-    int ret=-1;
+  public int ZeroAll() {
+    int ret = -1;
     if (!mLeProxy.bRealConnect) {
 
-      ret =-2;
+      ret = -2;
       //还没链接
       SISLogUtil.d("请先链接或等待链接成功");
       return ret;
@@ -233,19 +358,19 @@ public void test()
 
 
     String H_L = "High";
-    String[] para=new String[]{
-            S_Connect,
-            mLeProxy.linkDevice.getName(),
-            DC,
-            H_L,
-            average_number + ""};
+    String[] para = new String[]{
+        S_Connect,
+        mLeProxy.linkDevice.getName(),
+        DC,
+        H_L,
+        average_number + ""};
     if (para.length == 5) {
       spic_command.SetAvgNum(Integer.parseInt(para[4]));
       spic_command.SetAutoInt(true);
       spic_command.setZeroAllProgress(5);
       int gainrange = para[3].equals("High") ? Common_Constant.GR_HIGH
-              : Common_Constant.GR_LOW;
-      spic_command.setSampleType((byte)0x00);//校零时，默认DC模式
+          : Common_Constant.GR_LOW;
+      spic_command.setSampleType((byte) 0x00);//校零时，默认DC模式
       //spic_command.correct(gainrange, commType, Sn);
       spic_command.correct(gainrange, commType, LeProxy.linkDevice.getName());
       String[] s = new String[1];
@@ -253,9 +378,9 @@ public void test()
       s[0] = LeProxy.linkDevice.getName();
       spic_command.SetAutoInt(false);
       spic_command.setZeroAllProgress(100);
-     // respondcmd("ZeroAll", "OK", s, sock);
+      // respondcmd("ZeroAll", "OK", s, sock);
     } //else
-      //respondcmd("ZeroAll", "ERROR", PARANULL, sock);
+    //respondcmd("ZeroAll", "ERROR", PARANULL, sock);
 
     return ret;
 
@@ -272,8 +397,9 @@ public void test()
   public static final SISSdkController getInstance() {
     return SingletonHolder.INSTANCE;
   }
-  public static  boolean bDemoMode = false;
-  public static  boolean bDemoModeExit = false;
+
+  public static boolean bDemoMode = false;
+  public static boolean bDemoModeExit = false;
   public static String app_name = "";
   public static boolean bLoadImage = false;
   public static boolean bZeroFromMainActivity = false;
@@ -330,7 +456,6 @@ public void test()
   private String E1 = "e1";
   private String S_P1 = "s_p1";
   private String SHARED_DC = "DC";
-
 
 
 }

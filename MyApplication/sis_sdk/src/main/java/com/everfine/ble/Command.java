@@ -1,5 +1,5 @@
-package com.everfine.ble;
-
-public class Command {
-
-}
+//package com.everfine.ble;
+//
+//public class Command {
+//
+//}

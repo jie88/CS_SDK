@@ -55,11 +55,11 @@ public class Common_Constant {
 	public static final int CMD_WRITE_FLASH_PROGRESS = 0x14b;
 	public static final int CMD_AUTO_INTTIME_PROGRESS = 0x14c;
 	public static final int CMD_MEAS_PROGRESS = 0x14d;
-	
+
 	// ///////////////ָ��������ѯ����///////////////////////////
 	public static final int CMD_AUTO_INTTIME = 0X160;
 	public static final int CMD_START_MEAS = 0X161;
-	
+
 	public static final int CMD_MEAS_DETECTORPH = 0X164;
 	public static final int CMD_ZERO = 0X165;
 	public static final int CMD_ZERO_ALL = 0X166;
@@ -76,7 +76,7 @@ public class Common_Constant {
 	public static final int CMD_READ_REST_TIME = 0x17c;
 	public static final int CMD_READ_DELAY = 0x17d;
 	public static final int CMD_WRITE_DELAY = 0x17e;
-	
+
 	public static final int STATE_INITING = 0;
 	public static final int STATE_FLASH_INIT = 1;
 	public static final int STATE_INIT_OK = 2;

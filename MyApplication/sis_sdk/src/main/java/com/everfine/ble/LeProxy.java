@@ -26,6 +26,7 @@ import com.everfine.SISSdkController;
 import com.everfine.util.SISLogUtil;
 
 import java.util.ArrayList;
+
 import com.everfine.core.Tool;
 
 @SuppressLint("NewApi")
@@ -39,9 +40,10 @@ public class LeProxy {
   private Handler mHandler = new Handler();
   private BleService mBleService;
   //连接的蓝牙设备
-  public  static BluetoothDevice linkDevice;
+  public static BluetoothDevice linkDevice;
   private Context mContext;
   public static boolean bRealConnect = false;
+
   public LeProxy(Activity context) {
     mContext = context;
     mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -61,6 +63,22 @@ public class LeProxy {
 
     void onScanStop();
   }
+
+
+  /**
+   * 增加数据回调接口
+   */
+  public void setOnCallbackListener(OnCallbackListener onCallbackListener) {
+    this.onCallbackListener = onCallbackListener;
+  }
+
+  private OnCallbackListener onCallbackListener;
+
+  public interface OnCallbackListener {
+
+    void handleData(byte[] data);
+  }
+
 
   public void scanLeDevice(boolean enable) {
     System.out.println("scanLeDevice enable = " + enable + "  " + mScanning);
@@ -181,54 +199,62 @@ public class LeProxy {
 
       log("接收数据 <- " + DataUtil.byteArrayToHex(characteristic.getValue()));
       byte[] bData = characteristic.getValue();
-      int iBufferNum = characteristic.getValue().length;
 
-      if(bData[0] == 0x7B && bData[1] == 0x7B){
-        iNum = 0;
-      }
-      for(int i = 0;i<iBufferNum;i++){
-        byBuffer[iNum++] = bData[i];
-      }
-      if(iNum > 4 && byBuffer[4] == SPIC_Command.CMD_READ_FLASH){
-        //   MyApplication.readFlashProcess = 100*iNum/MyApplication.readFlashNum;
+      if (null != onCallbackListener) {
+        //将数据丢到 SISSDKController 中处理
+        onCallbackListener.handleData(bData);
       }
 
-      int iFindHeadPos = 0;
-      if (byBuffer[iNum - 2] == 0x7D
-              && byBuffer[iNum - 1] == 0x7D){
-//				log("接收数据  ----iNum = " + iNum + " == " + bytesToHexString(byBuffer,iNum));
-        for (int i = iNum - 3; i >= 1; i--) {
-          if (byBuffer[i - 1] == 0x7B && byBuffer[i] == 0x7B) {
-            iFindHeadPos = i - 1;
-            break;
-          }
-        }
-        System.out.println("iFindHeadPos = " + iFindHeadPos + "  iNum = " + iNum);
 
-        byte cmd = byBuffer[iFindHeadPos + 4];
-        ReadMeterSocketOneData oneData = new ReadMeterSocketOneData(
-                iFindHeadPos, byBuffer, iNum - iFindHeadPos);
-
-        if (oneData.isDataOk()) {
-          Log.d(TAG, "oneData is ok! CMD is " + Integer.toHexString(cmd&0xff));
-          if (mListSocketOneData.size() >= 10)
-            mListSocketOneData.remove(0);
-          mListSocketOneData.add(oneData);
-          Log.d(TAG, "oneData is ok! CMD is " +  Tool.byteArrayToAsciiString(mListSocketOneData.get(0).para));
-        }
-        else {
-          mListSocketOneData.add(oneData);
-          Log.d(TAG, "oneData is ERROR!");
-        }
-        iNum = 0;
-      }
+//      int iBufferNum = characteristic.getValue().length;
+//
+//      if (bData[0] == 0x7B && bData[1] == 0x7B) {
+//        iNum = 0;
+//      }
+//      for (int i = 0; i < iBufferNum; i++) {
+//        byBuffer[iNum++] = bData[i];
+//      }
+//      if (iNum > 4 && byBuffer[4] == SPIC_Command.CMD_READ_FLASH) {
+//        //   MyApplication.readFlashProcess = 100*iNum/MyApplication.readFlashNum;
+//      }
+//
+//      int iFindHeadPos = 0;
+//      if (byBuffer[iNum - 2] == 0x7D
+//          && byBuffer[iNum - 1] == 0x7D) {
+////				log("接收数据  ----iNum = " + iNum + " == " + bytesToHexString(byBuffer,iNum));
+//        for (int i = iNum - 3; i >= 1; i--) {
+//          if (byBuffer[i - 1] == 0x7B && byBuffer[i] == 0x7B) {
+//            iFindHeadPos = i - 1;
+//            break;
+//          }
+//        }
+//        System.out.println("iFindHeadPos = " + iFindHeadPos + "  iNum = " + iNum);
+//
+//        byte cmd = byBuffer[iFindHeadPos + 4];
+//        ReadMeterSocketOneData oneData = new ReadMeterSocketOneData(
+//            iFindHeadPos, byBuffer, iNum - iFindHeadPos);
+//
+//        if (oneData.isDataOk()) {
+//          Log.d(TAG, "oneData is ok! CMD is " + Integer.toHexString(cmd & 0xff));
+//          if (mListSocketOneData.size() >= 10)
+//            mListSocketOneData.remove(0);
+//          mListSocketOneData.add(oneData);
+//          Log.d(TAG, "oneData is ok! CMD is " + Tool.byteArrayToAsciiString(mListSocketOneData.get(0).para));
+//        } else {
+//          mListSocketOneData.add(oneData);
+//          Log.d(TAG, "oneData is ERROR!");
+//        }
+//        iNum = 0;
+//      }
     }
+
     public byte[] byBuffer = new byte[4194304];
     public int iNum = 0;
 
     public ArrayList<ReadMeterSocketOneData> mListSocketOneData = new ArrayList<ReadMeterSocketOneData>();
 
     private final static String TAG = "LeProxy";
+
     private void log(String msg) {
       Log.i("LeProxy", "" + msg);
     }
@@ -259,8 +285,6 @@ public class LeProxy {
   }
 
 
-
-
   // 连接设备
   public boolean connect(BluetoothDevice bleDevice) {
     linkDevice = bleDevice;
@@ -274,6 +298,7 @@ public class LeProxy {
   }
 
   String sData = "";
+
   // 发送数据
   public boolean send(byte[] data, int iLength) {
     sData = DataUtil.byteArrayToHex(data);
@@ -307,6 +332,7 @@ public class LeProxy {
   public boolean isBlueEnable() {
     return this.mBluetoothAdapter != null && this.mBluetoothAdapter.isEnabled();
   }
+
   private void broadcast(String action, String address) {
     Intent intent = new Intent(action);
     intent.putExtra(EXTRA_ADDRESS, address);
